@@ -3,7 +3,7 @@ Swift class to calculate magnetic declination, magnetic field strength, inclinat
 
 ## Usage
 ```swift
-// Create instance
+// Create instance with only location and without altitude & date
 let gm:Geomagnetism = Geomagnetism(longitude: 123.45678, latitude: 76.54321)
 print("Declination: \(gm.getDeclination())")
 
