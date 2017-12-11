@@ -253,44 +253,45 @@ class Geomagnetism {
 		olon = longitude
 	}
 
-	/** - returns: The declination in degrees*/
+	/** - returns: Geomagnetic declination (degrees) [opposite of variation, positive Eastward/negative Westward]*/
 	func getDeclination() -> Double {
 		return declination
 	}
 
-	/** - returns: The magnetic field intensity/strength in nano Tesla*/
+	/** - returns: Geomagnetic inclination/dip angle (degrees) [positive downward]*/
+	func getInclination() -> Double {
+		return inclination
+	}
+
+	/** - returns: Geomagnetic field intensity/strength (nano Teslas)*/
 	func getIntensity() -> Double {
 		return intensity
 	}
 
-	/** - returns: The horizontal magnetic field intensity/strength in nano Tesla*/
+	/** - returns: Geomagnetic horizontal field intensity/strength (nano Teslas)*/
 	func getHorizontalIntensity() -> Double {
 		return bh
 	}
 
-	/** - returns: The vertical magnetic field intensity/strength in nano Tesla*/
+	/** - returns: Geomagnetic vertical field intensity/strength (nano Teslas) [positive downward]*/
 	func getVerticalIntensity() -> Double {
 		return bz
 	}
 
-	/** - returns: The northerly component of the magnetic field strength in nano Tesla*/
+	/** - returns: Geomagnetic North South (northerly component) field intensity/strength (nano Tesla)*/
 	func getNorthIntensity() -> Double {
 		return bx
 	}
 
-	/** - returns: The easterly component of the magnetic field strength in nano Tesla*/
+	/** - returns: Geomagnetic East West (easterly component) field intensity/strength (nano Teslas)*/
 	func getEastIntensity() -> Double {
 		return by
 	}
 
-	/** - returns: The magnetic field dip angle, in degrees*/
-	func getDipAngle() -> Double {
-		return inclination
-	}
-
 	/**	The input string array which contains each line of input for the wmm.cof input file.
 	*	The columns in this file are as follows:	n,	m,	gnm,	hnm,	dgnm,	dhnm*/
-	private static let WMM_COF:[String] = ["    2015.0            WMM-2015        12/15/2014",
+	private static let WMM_COF:[String] = [
+			"    2015.0            WMM-2015        12/15/2014",
 			"  1  0  -29438.5       0.0       10.7        0.0",
 			"  1  1   -1501.1    4796.2       17.9      -26.8",
 			"  2  0   -2445.3       0.0       -8.6        0.0",
@@ -382,57 +383,66 @@ class Geomagnetism {
 			" 12 11      -0.9      -0.2        0.0        0.0",
 			" 12 12       0.0       0.7        0.0        0.0",]
 
-	/** Mean radius of IAU-66 ellipsoid, in km.*/
+	/** Mean radius of IAU-66 ellipsoid, in km*/
 	private static let IAU66_RADIUS:Double = 6371.2
 
-	/** Semi-major axis of WGS-84 ellipsoid, in km.*/
+	/** Semi-major axis of WGS-84 ellipsoid, in km*/
 	private static let WGS84_A:Double = 6378.137
 
-	/** Semi-minor axis of WGS-84 ellipsoid, in km.*/
+	/** Semi-minor axis of WGS-84 ellipsoid, in km*/
 	private static let WGS84_B:Double = 6356.7523142
 
-	/** The maximum number of degrees of the spherical harmonic model.*/
+	/** The maximum number of degrees of the spherical harmonic model*/
 	private static let MAX_DEG:Int = 12
 
-	/** Geomagnetic declination in deg.
-	*	East is positive, West is negative.
-	*	(The negative of variation.)*/
+	/** Geomagnetic declination (decimal degrees) [opposite of variation, positive Eastward/negative Westward]*/
 	private var declination:Double = Double.nan
 
-	/** Geomagnetic inclination in deg.
-	*	Down is positive, up is negative.*/
+	/** Geomagnetic inclination/dip angle (degrees) [positive downward]*/
 	private var inclination:Double = Double.nan
 
-	/** Geomagnetic total intensity, in nano Teslas.*/
+	/** Geomagnetic field intensity/strength (nano Teslas)*/
 	private var intensity:Double = Double.nan
 
-	/** The maximum order of spherical harmonic model.*/
+	/** Geomagnetic horizontal field intensity/strength (nano Teslas)*/
+	private var bh:Double = Double.nan
+
+	/** Geomagnetic vertical field intensity/strength (nano Teslas) [positive downward]*/
+	private var bz:Double = Double.nan
+
+	/** Geomagnetic North South (northerly component) field intensity/strength (nano Tesla)*/
+	private var bx:Double = Double.nan
+
+	/** Geomagnetic East West (easterly component) field intensity/strength (nano Teslas)*/
+	private var by:Double = Double.nan
+
+	/** The maximum order of spherical harmonic model*/
 	private var maxord:Int
 
-	/** The Gauss coefficients of main geomagnetic model (nt).*/
+	/** The Gauss coefficients of main geomagnetic model (nt)*/
 	private var c:[[Double]] = Array(repeating: Array(repeating: Double.nan, count: 13), count: 13)
 
-	/** The Gauss coefficients of secular geomagnetic model (nt/yr).*/
+	/** The Gauss coefficients of secular geomagnetic model (nt/yr)*/
 	private var cd:[[Double]] = Array(repeating: Array(repeating: Double.nan, count: 13), count: 13)
 
-	/** The time adjusted geomagnetic gauss coefficients (nt).*/
+	/** The time adjusted geomagnetic gauss coefficients (nt)*/
 	private var tc:[[Double]] = Array(repeating: Array(repeating: Double.nan, count: 13), count: 13)
 
-	/** The theta derivative of p(n,m) (unnormalized).*/
+	/** The theta derivative of p(n,m) (unnormalized)*/
 	private var dp:[[Double]] = Array(repeating: Array(repeating: Double.nan, count: 13), count: 13)
 
-	/** The Schmidt normalization factors.*/
+	/** The Schmidt normalization factors*/
 	private var snorm:[Double] = Array(repeating: Double.nan, count: 169)
 
-	/** The sine of (m*spherical coord. longitude).*/
+	/** The sine of (m*spherical coordinate longitude)*/
 	private var sp:[Double] = Array(repeating: Double.nan, count: 13)
 
-	/** The cosine of (m*spherical coord. longitude).*/
+	/** The cosine of (m*spherical coordinate longitude)*/
 	private var cp:[Double] = Array(repeating: Double.nan, count: 13)
 	private var fn:[Double] = Array(repeating: Double.nan, count: 13)
 	private var fm:[Double] = Array(repeating: Double.nan, count: 13)
 
-	/** The associated Legendre polynomials for m = 1 (unnormalized).*/
+	/** The associated Legendre polynomials for m = 1 (unnormalized)*/
 	private var pp:[Double] = Array(repeating: Double.nan, count: 13)
 
 	private var k:[[Double]] = Array(repeating: Array(repeating: Double.nan, count: 13), count: 13)
@@ -440,17 +450,12 @@ class Geomagnetism {
 	/** The variables otime (old time), oalt (old altitude),
 	*	olat (old latitude), olon (old longitude), are used to
 	*	store the values used from the previous calculation to
-	*	save on calculation time if some inputs don't change.*/
+	*	save on calculation time if some inputs don't change*/
 	private var otime:Double, oalt:Double, olat:Double, olon:Double
 
 	/** The date in years, for the start of the valid time of the fit coefficients*/
 	private var epoch:Double
 
-	/** bx is the north south field intensity
-	*	by is the east west field intensity
-	*	bz is the vertical field intensity positive downward
-	*	bh is the horizontal field intensity*/
-	private var bx:Double = Double.nan, by:Double = Double.nan, bz:Double = Double.nan, bh:Double = Double.nan
 	private var r:Double = Double.nan, d:Double = Double.nan, ca:Double = Double.nan,
 			sa:Double = Double.nan, ct:Double = Double.nan, st:Double = Double.nan
 }
