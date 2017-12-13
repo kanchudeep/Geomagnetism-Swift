@@ -25,7 +25,7 @@ Satellite and Information Service, National Geophysical Data Center
 
 http://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml
 
-© Deep Pradhan, 2017*/
+Â© Deep Pradhan, 2017*/
 class Geomagnetism {
 
 	/** Initializes the instance without calculations*/
@@ -57,8 +57,8 @@ class Geomagnetism {
 				c[m][n] = gnm
 				cd[m][n] = dgnm
 				if m != 0 {
-					c[n][m-1] = hnm
-					cd[n][m-1] = dhnm
+					c[n][m - 1] = hnm
+					cd[n][m - 1] = dhnm
 				}
 			}
 		}
@@ -98,7 +98,7 @@ class Geomagnetism {
 	- parameters:
 		- longitude: Longitude in decimal degrees
 		- latitude: Latitude in decimal degrees
-		- altitude: Altitude in metres
+		- altitude: Altitude in metres (with respect to WGS-1984 ellipsoid)
 		- date: Date of the calculation*/
 	convenience init(longitude:Double, latitude:Double, altitude:Double? = 0, date:Date? = Date.init()) {
 		self.init()
@@ -109,7 +109,7 @@ class Geomagnetism {
 	- parameters:
 		- longitude: Longitude in decimal degrees
 		- latitude: Latitude in decimal degrees
-		- altitude: Altitude in metres
+		- altitude: Altitude in metres (with respect to WGS-1984 ellipsoid)
 		- date: Date of the calculation*/
 	func calculate(longitude:Double, latitude:Double, altitude:Double? = 0, date:Date? = Date.init()) {
 		let rlon:Double = longitude.toRadians,
@@ -151,8 +151,8 @@ class Geomagnetism {
 		}
 		if longitude != olon {
 			for m in (2...maxord) {
-				sp[m] = sp[1] * cp[m-1] + cp[1] * sp[m-1]
-				cp[m] = cp[1] * cp[m-1] - sp[1] * sp[m-1]
+				sp[m] = sp[1] * cp[m - 1] + cp[1] * sp[m - 1]
+				cp[m] = cp[1] * cp[m - 1] - sp[1] * sp[m - 1]
 			}
 		}
 		let aor:Double = Geomagnetism.IAU66_RADIUS / r
@@ -196,7 +196,7 @@ class Geomagnetism {
 					}
 				}
 
-				//Accumulate terms of the spherical harmonic expansions
+				// Accumulate terms of the spherical harmonic expansions
 				par = ar * snorm[ n + m * 13]
 				if m == 0 {
 					temp1 = tc[m][n] * cp[m]
@@ -233,59 +233,24 @@ class Geomagnetism {
 		}
 
 		// Rotate magnetic vector components from spherical to geodetic coordinates
-		// bx must be the east-west field component
-		// by must be the north-south field component
-		// bz must be the vertical field component.
-		bx = -bt * ca - br * sa
-		by = bp
-		bz = bt * sa - br * ca
+		// northIntensity must be the east-west field component
+		// eastIntensity must be the north-south field component
+		// verticalIntensity must be the vertical field component.
+		northIntensity = -bt * ca - br * sa
+		eastIntensity = bp
+		verticalIntensity = bt * sa - br * ca
 
 		// Compute declination (dec), inclination (dip) and total intensity (ti)
-		bh = sqrt((bx * bx)+(by * by))
-		intensity = sqrt((bh * bh)+(bz * bz))
+		horizontalIntensity = sqrt((northIntensity * northIntensity) + (eastIntensity * eastIntensity))
+		intensity = sqrt((horizontalIntensity * horizontalIntensity) + (verticalIntensity * verticalIntensity))
 		//	Calculate the declination.
-		declination = atan2(by, bx).toDegrees
-		inclination = atan2(bz, bh).toDegrees
+		declination = atan2(eastIntensity, northIntensity).toDegrees
+		inclination = atan2(verticalIntensity, horizontalIntensity).toDegrees
 
 		otime = yearFraction
 		oalt = altitudeKm
 		olat = latitude
 		olon = longitude
-	}
-
-	/** - returns: Geomagnetic declination (degrees) [opposite of variation, positive Eastward/negative Westward]*/
-	func getDeclination() -> Double {
-		return declination
-	}
-
-	/** - returns: Geomagnetic inclination/dip angle (degrees) [positive downward]*/
-	func getInclination() -> Double {
-		return inclination
-	}
-
-	/** - returns: Geomagnetic field intensity/strength (nano Teslas)*/
-	func getIntensity() -> Double {
-		return intensity
-	}
-
-	/** - returns: Geomagnetic horizontal field intensity/strength (nano Teslas)*/
-	func getHorizontalIntensity() -> Double {
-		return bh
-	}
-
-	/** - returns: Geomagnetic vertical field intensity/strength (nano Teslas) [positive downward]*/
-	func getVerticalIntensity() -> Double {
-		return bz
-	}
-
-	/** - returns: Geomagnetic North South (northerly component) field intensity/strength (nano Tesla)*/
-	func getNorthIntensity() -> Double {
-		return bx
-	}
-
-	/** - returns: Geomagnetic East West (easterly component) field intensity/strength (nano Teslas)*/
-	func getEastIntensity() -> Double {
-		return by
 	}
 
 	/**	The input string array which contains each line of input for the wmm.cof input file.
@@ -386,35 +351,35 @@ class Geomagnetism {
 	/** Mean radius of IAU-66 ellipsoid, in km*/
 	private static let IAU66_RADIUS:Double = 6371.2
 
-	/** Semi-major axis of WGS-84 ellipsoid, in km*/
+	/** Semi-major axis of WGS-1984 ellipsoid, in km*/
 	private static let WGS84_A:Double = 6378.137
 
-	/** Semi-minor axis of WGS-84 ellipsoid, in km*/
+	/** Semi-minor axis of WGS-1984 ellipsoid, in km*/
 	private static let WGS84_B:Double = 6356.7523142
 
 	/** The maximum number of degrees of the spherical harmonic model*/
 	private static let MAX_DEG:Int = 12
 
 	/** Geomagnetic declination (decimal degrees) [opposite of variation, positive Eastward/negative Westward]*/
-	private var declination:Double = Double.nan
+	private(set) var declination:Double = Double.nan
 
 	/** Geomagnetic inclination/dip angle (degrees) [positive downward]*/
-	private var inclination:Double = Double.nan
+	private(set) var inclination:Double = Double.nan
 
 	/** Geomagnetic field intensity/strength (nano Teslas)*/
-	private var intensity:Double = Double.nan
+	private(set) var intensity:Double = Double.nan
 
 	/** Geomagnetic horizontal field intensity/strength (nano Teslas)*/
-	private var bh:Double = Double.nan
+	private(set) var horizontalIntensity:Double = Double.nan
 
 	/** Geomagnetic vertical field intensity/strength (nano Teslas) [positive downward]*/
-	private var bz:Double = Double.nan
+	private(set) var verticalIntensity:Double = Double.nan
 
 	/** Geomagnetic North South (northerly component) field intensity/strength (nano Tesla)*/
-	private var bx:Double = Double.nan
+	private(set) var northIntensity:Double = Double.nan
 
 	/** Geomagnetic East West (easterly component) field intensity/strength (nano Teslas)*/
-	private var by:Double = Double.nan
+	private(set) var eastIntensity:Double = Double.nan
 
 	/** The maximum order of spherical harmonic model*/
 	private var maxord:Int
