@@ -117,8 +117,8 @@ class Geomagnetism {
 				altitudeKm:Double = altitude! / 1000,
 				calendar:Calendar = Calendar.current,
 				yearFraction:Double = Double(calendar.component(.year, from: date!))
-					+ Double(calendar.ordinality(of: .day, in: .year, for: date!)!)
-					/ Double(calendar.range(of: .day, in: .year, for: date!)!.count),
+						+ Double(calendar.ordinality(of: .day, in: .year, for: date!)!)
+						/ Double(calendar.range(of: .day, in: .year, for: date!)!.count),
 				dt:Double = yearFraction - epoch,
 				srlon:Double = sin(rlon),
 				srlat:Double = sin(rlat),
