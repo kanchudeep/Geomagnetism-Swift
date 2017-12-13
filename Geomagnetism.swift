@@ -25,7 +25,7 @@ Satellite and Information Service, National Geophysical Data Center
 
 http://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml
 
-Â© Deep Pradhan, 2017*/
+© Deep Pradhan, 2017*/
 class Geomagnetism {
 
 	/** Initializes the instance without calculations*/
