@@ -116,9 +116,12 @@ class Geomagnetism {
 				rlat:Double = latitude.toRadians,
 				altitudeKm:Double = altitude! / 1000,
 				calendar:Calendar = Calendar.current,
-				yearFraction:Double = Double(calendar.component(.year, from: date!))
-						+ Double(calendar.ordinality(of: .day, in: .year, for: date!)!)
-						/ Double(calendar.range(of: .day, in: .year, for: date!)!.count),
+				yearLength:Int = calendar.range(of: .day, in: .year, for: date!)!.count,
+				yearFraction:Double = Double(year)
+					+ Double(calendar.ordinality(of: .day, in: .year, for: date!)!)
+					/* If .range(of: in: for:) returns an invalid value (observed on iOS < 11)
+						 use a leap year test based value for year length*/
+					/ Double(yearLength >= 365 ? yearLength : (year % 4 == 0 && (year % 25 != 0 || (year % 400 == 0 && year % 4000 != 0)) ? 366 : 365)),
 				dt:Double = yearFraction - epoch,
 				srlon:Double = sin(rlon),
 				srlat:Double = sin(rlat),
