@@ -114,7 +114,7 @@ class Geomagnetism {
 	func calculate(longitude:Double, latitude:Double, altitude:Double? = 0, date:Date? = Date.init()) {
 		let rlon:Double = longitude.toRadians,
 				rlat:Double = latitude.toRadians,
-				altitudeKm:Double = altitude! / 1000,
+				altitudeKm:Double = altitude!.isNaN ? 0 : altitude! / 1000,
 				calendar:Calendar = Calendar.init(identifier: .gregorian),
 				yearLength:Int = calendar.range(of: .day, in: .year, for: date!)!.count,
 				yearFraction:Double = Double(year)
