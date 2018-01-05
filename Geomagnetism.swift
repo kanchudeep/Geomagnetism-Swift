@@ -171,7 +171,7 @@ class Geomagnetism {
 				// Compute unnormalized associated legendre polynomials and derivatives via recursion relations
 				if altitudeKm != oalt || latitude != olat {
 					if n == m {
-						snorm[n + m * 13] = st * snorm[n - 1 + (m - 1) * 13];
+						snorm[n + m * 13] = st * snorm[n - 1 + (m - 1) * 13]
 						dp[m][n] = st * dp[m - 1][n - 1] + ct * snorm[n - 1 + (m - 1) * 13]
 					}
 					if n == 1 && m == 0 {
