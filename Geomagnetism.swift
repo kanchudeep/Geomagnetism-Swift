@@ -116,6 +116,7 @@ class Geomagnetism {
 				rlat:Double = latitude.toRadians,
 				altitudeKm:Double = altitude!.isNaN ? 0 : altitude! / 1000,
 				calendar:Calendar = Calendar.init(identifier: .gregorian),
+				year:Int = calendar.component(.year, from: date!),
 				yearLength:Int = calendar.range(of: .day, in: .year, for: date!)!.count,
 				yearFraction:Double = Double(year)
 					+ Double(calendar.ordinality(of: .day, in: .year, for: date!)!)
