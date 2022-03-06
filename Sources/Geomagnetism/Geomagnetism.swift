@@ -26,7 +26,7 @@ Satellite and Information Service, National Geophysical Data Center
 http://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml
 
 © Deep Pradhan, 2017*/
-class Geomagnetism {
+public class Geomagnetism {
 
 	/** Initializes the instance without calculations*/
 	init() {
@@ -100,7 +100,7 @@ class Geomagnetism {
 		- latitude: Latitude in decimal degrees
 		- altitude: Altitude in metres (with respect to WGS-1984 ellipsoid)
 		- date: Date of the calculation*/
-	convenience init(longitude:Double, latitude:Double, altitude:Double? = 0, date:Date? = Date.init()) {
+	public convenience init(longitude:Double, latitude:Double, altitude:Double? = 0, date:Date? = Date.init()) {
 		self.init()
 		calculate(longitude: longitude, latitude: latitude, altitude: altitude!, date: date!)
 	}
@@ -365,10 +365,10 @@ class Geomagnetism {
 	private static let MAX_DEG:Int = 12
 
 	/** Geomagnetic declination (decimal degrees) [opposite of variation, positive Eastward/negative Westward]*/
-	private(set) var declination:Double = Double.nan
+	public private(set) var declination:Double = Double.nan
 
 	/** Geomagnetic inclination/dip angle (degrees) [positive downward]*/
-	private(set) var inclination:Double = Double.nan
+	public private(set) var inclination:Double = Double.nan
 
 	/** Geomagnetic field intensity/strength (nano Teslas)*/
 	private(set) var intensity:Double = Double.nan
